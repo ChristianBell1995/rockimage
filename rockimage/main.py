@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def root():
-    return jsonify({"message": "Hello Cloud"}), 200
+    return jsonify({"message": "Hello Cloud - testing build... "}), 200
 
 
 if config.ENABLE_API:
