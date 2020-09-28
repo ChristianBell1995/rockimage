@@ -23,7 +23,7 @@ jobs:
           service_account_key: ${{ secrets.SERVICE_ACCOUNT_KEY }}
 
       - name: Configure Docker
-        run: gcloud auth configure-docker
+        run: gcloud beta auth configure-docker us.gcr.io
 
       - name: Build image
         run: docker build -t ${{ secrets.IMAGE_TAG }}:${{ github.sha }} .
