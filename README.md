@@ -12,3 +12,8 @@ This API uses env variables for config. They are configured in `rockimage/config
 
 - `ENABLE_API` - for enabling certain API endpoints
 - `DATABASE_URL` - the database endpoint
+
+## Useful commands
+To run locally:
+- `docker build --tag rockimage:1.0 .`
+- `docker run -p 8080:80 rockimage:1.0`
