@@ -15,11 +15,8 @@ if config.ENABLE_API:
 
     @app.route("/images", methods=["GET"])
     def list_images():
-        try:
-            images = service.list_images()
-            return jsonify(images), 200
-        except Exception as e:
-            print(e)
+        images = service.list_images()
+        return jsonify(images), 200
 
     @app.route("/images/", methods=["POST"])
     def create_image():
