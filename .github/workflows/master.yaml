@@ -20,6 +20,7 @@ jobs:
       - name: Python Setup
         run: |
           pip install alembic
+          pip install psycopg2-binary
           alembic --version
 
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@0.1.2
