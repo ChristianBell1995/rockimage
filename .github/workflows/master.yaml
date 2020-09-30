@@ -16,7 +16,12 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+
+      - name: Python Setup
         uses: actions/setup-python@v1
+        run: |
+          pip install alembic
+          alembic --version
 
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@0.1.2
         with:
@@ -31,11 +36,6 @@ jobs:
 
       - name: Push image
         run: docker push ${{ secrets.HOSTNAME }}/${{ secrets.PROJECT_ID }}/${{ secrets.IMAGE_TAG }}:${{ github.sha }}
-
-      - name: Install alembic
-        run: |
-          pip install alembic
-          alembic --version
 
       # - name: Deploy to Cloud Run
       #   run: >
