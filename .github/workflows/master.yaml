@@ -16,6 +16,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
+        uses: actions/setup-python@v1
 
       - uses: GoogleCloudPlatform/github-actions/setup-gcloud@0.1.2
         with:
@@ -31,6 +32,11 @@ jobs:
       - name: Push image
         run: docker push ${{ secrets.HOSTNAME }}/${{ secrets.PROJECT_ID }}/${{ secrets.IMAGE_TAG }}:${{ github.sha }}
 
+      - name: Install alembic
+        run: |
+          pip install alembic
+          alembic --version
+
       # - name: Deploy to Cloud Run
       #   run: >
       #     gcloud run deploy ${{ secrets.CLOUD_RUN_SERVICE }}-integration
@@ -40,9 +46,6 @@ jobs:
       - name: Install cloud sql proxy
         run: |
           set -e
-          echo "Installing alembic"
-          pip install alembic
-          alembic --version
 
           if ! [ -x "$(command -v cloud_sql_proxy)" ]; then
             echo 'Cloud SQL Proxy not installed. Installing.' >&2
