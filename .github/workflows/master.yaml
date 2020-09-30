@@ -40,6 +40,8 @@ jobs:
       - name: Install cloud sql proxy
         run: |
           set -e
+          echo "Installing alembic"
+          pip install alembic
 
           if ! [ -x "$(command -v cloud_sql_proxy)" ]; then
             echo 'Cloud SQL Proxy not installed. Installing.' >&2
