@@ -14,11 +14,10 @@ jobs:
     name: Build and deploy
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v1
 
       - name: Python Setup
-        uses: actions/setup-python@v1
         run: |
           pip install alembic
           alembic --version
