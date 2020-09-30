@@ -36,3 +36,36 @@ jobs:
           gcloud run deploy ${{ secrets.CLOUD_RUN_SERVICE }}-integration
           --image ${{ secrets.HOSTNAME }}/${{ secrets.PROJECT_ID }}/${{ secrets.IMAGE_TAG }}:${{ github.sha }}
           --service-account ${{ secrets.SERVICE_ACCOUNT }}
+
+      - name: Install cloud sql proxy
+        run: |
+          set -e
+
+          if ! [ -x "$(command -v cloud_sql_proxy)" ]; then
+            echo 'Cloud SQL Proxy not installed. Installing.' >&2
+            wget https://dl.google.com/cloudsql/cloud_sql_proxy.linux.amd64 -O cloud_sql_proxy
+            sudo install cloud_sql_proxy /usr/bin
+          else
+            echo 'Cloud SQL Proxy already installed'
+          fi
+
+          cleanup_sql() {
+            echo 'Stopping SQL proxy'
+            PID=$(ps aux | grep -v grep | grep cloud_sql_proxy | awk '{print $2}')
+            if [ -n "$PID" ]; then
+              echo "Killing $PID"
+              kill -9 $PID
+            else
+              echo "No SQL proxy to stop"
+            fi
+          }
+
+          trap "cleanup_sql" EXIT
+
+          echo 'Starting SQL Proxy'
+          cloud_sql_proxy -instances=${CLOUD_SQL_INSTANCE_NAME}=tcp:5433 & sleep 2
+
+          echo 'Running migrations'
+          DATABASE_URL="postgresql://${DATABASE_USER}:${DATABASE_PASSWORD}@localhost:5433/${DATABASE_NAME}" alembic upgrade head
+
+          cleanup_sql
