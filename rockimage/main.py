@@ -24,7 +24,11 @@ if config.ENABLE_API:
         result = service.save_image(image)
         return jsonify(result), 200
 
+<<<<<<< HEAD
     @app.route("/images/<str:uuid>")
+=======
+    @app.route("/images/<uuid:uuid>")
+>>>>>>> upstream/master
     def get_image(uuid: str):
         print("Got through inital get_image method...")
         print(uuid)
