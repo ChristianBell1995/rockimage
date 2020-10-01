@@ -3,11 +3,12 @@ info:
   title: Cloud Endpoints + Cloud Run
   description: Sample API on Cloud Endpoints with a Cloud Run backend
   version: 1.0.0
-host: rockimage-integration-pfst5brwxq-uc.a.run.app
+host: gateway-pfst5brwxq-uc.a.run.app
 schemes:
   - https
 produces:
   - application/json
+security: []
 x-google-backend:
   address: https://rockimage-integration-pfst5brwxq-uc.a.run.app
   protocol: h2
@@ -16,35 +17,41 @@ paths:
     get:
       summary: Root
       operationId: root
-      security: []
       responses:
         '200':
           description: A successful response
           schema:
             type: string
+
   /images:
     get:
       summary: Gets UUIDS of all images
       operationId: images
-      security: []
       responses:
         '200':
           description: A successful response
           schema:
-            type: object
+            type: array
+            items:
+              type: object
+              properties:
+                uuid:
+                  type: string
+                  description: The UUID.
+                path:
+                  type: string
+                  description: The path of the image.
 
     post:
       operationId: create
-      security: []
       summary: Uploads an image.
       consumes:
         - multipart/form-data
-      produces:
-        - "application/json"
       parameters:
         - in: formData
           name: file
-          type: file
+          type: string
+          format: binary
           description: The file to upload.
       responses:
         '200':
@@ -63,9 +70,6 @@ paths:
     get:
       operationId: single-image
       summary: Get a user by ID
-      security: []
-      produces:
-        - "application/json"
       parameters:
       - name: uuid
         in: "path"
