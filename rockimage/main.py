@@ -26,7 +26,7 @@ if config.ENABLE_API:
 
     @app.route("/images/<uuid:str>")
     def get_image(uuid: str):
-        print("Got through inital get_image method")
+        print("Got through inital get_image method...")
         print(uuid)
         image = service.get_image(uuid)
         return jsonify(image), 200
