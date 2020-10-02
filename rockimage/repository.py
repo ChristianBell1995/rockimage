@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
-from uuid import UUID
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List, Optional
+from uuid import UUID
 
 import sqlalchemy as sa
 from google.cloud import firestore
@@ -13,6 +13,7 @@ from rockimage import config, db, models
 class ImageRecord:
     path: str
     uuid: str
+    annotations: List[str] = field(default_factory=lambda: [])
 
 
 class Repository(ABC):
@@ -28,10 +29,16 @@ class Repository(ABC):
     def save_image(self, uuid: str, path: str) -> ImageRecord:
         pass
 
+    @abstractmethod
+    def update_image(self, uuid: str, **kwargs) -> ImageRecord:
+        pass
+
 
 class SQLRepository(Repository):
     def get_image(self, uuid: str) -> Optional[ImageRecord]:
-        result = db.session.query(models.Image).filter(models.Image.uuid == uuid).first()
+        result = (
+            db.session.query(models.Image).filter(models.Image.uuid == uuid).first()
+        )
         if not result:
             return None
         return ImageRecord(path=result.path, uuid=result.uuid)
@@ -45,6 +52,21 @@ class SQLRepository(Repository):
         db.session.add(image)
         db.session.commit()
         return ImageRecord(uuid=uuid, path=path)
+
+    def update_image(
+        self, uuid: str, annotations: Optional[List[str]] = None
+    ) -> Optional[ImageRecord]:
+        result = (
+            db.session.query(models.Image).filter(models.Image.uuid == uuid).first()
+        )
+        if not result:
+            return None
+        if annotations:
+            result.annotations = annotations
+
+        db.session.add(result)
+        db.session.commit()
+        return ImageRecord(path=result.path, uuid=result.uuid, annotations=result.annotations)
 
 
 class FirestoreRepository(Repository):

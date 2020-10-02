@@ -1,4 +1,5 @@
 from sqlalchemy import Column, String
+from sqlalchemy.dialects.postgresql import ARRAY
 from sqlalchemy.sql import text
 from sqlalchemy.dialects.postgresql import UUID
 
@@ -16,3 +17,4 @@ class Image(Base):
         index=True,
     )
     path = Column(String, nullable=False)
+    annotations = Column(ARRAY(String))
